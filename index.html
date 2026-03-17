@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALAXY MEMORY BATTLE | Cosmic Card Matching</title>
+    <meta name="description"
+        content="Enter the cosmic arena. Features Galaxy Space theme, PvP mode, and vs AI mode in a stunning dark purple atmosphere.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Boxicons for icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Canvas Confetti for winning effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="stars-container"></div>
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Start & Theme Selection Screen -->
+    <div class="start-screen active" id="start-screen">
+        <div class="start-content">
+            <div class="game-intro">
+                <i class='bx bxs-planet main-icon'></i>
+                <h1>GALAXY<span>BATTLE</span></h1>
+                <p>Choose your cosmic realm and begin the mission.</p>
+            </div>
+
+            <div class="theme-selection">
+                <h3>Select Your Fleet</h3>
+                <div class="theme-grid">
+                    <button class="theme-btn" data-theme="galaxy">
+                        <span class="theme-icon">🌌</span>
+                        <span class="theme-name">Galaxy</span>
+                    </button>
+                    <button class="theme-btn" data-theme="fashion">
+                        <span class="theme-icon">👗</span>
+                        <span class="theme-name">Fashion</span>
+                    </button>
+                    <button class="theme-btn" data-theme="tech">
+                        <span class="theme-icon">💻</span>
+                        <span class="theme-name">Tech</span>
+                    </button>
+                    <button class="theme-btn" data-theme="emojis">
+                        <span class="theme-icon">❤️</span>
+                        <span class="theme-name">Emoji</span>
+                    </button>
+                    <button class="theme-btn" data-theme="numbers">
+                        <span class="theme-icon">🔢</span>
+                        <span class="theme-name">Numbers</span>
+                    </button>
+                    <button class="theme-btn" data-theme="anime">
+                        <span class="theme-icon">🌸</span>
+                        <span class="theme-name">Anime</span>
+                    </button>
+                </div>
+            </div>
+
+            <p class="start-hint">Initiating starship sequence...</p>
+        </div>
+    </div>
+
+    <div class="app-container hidden" id="main-app">
+        <header>
+            <div class="logo">
+                <i class='bx bxs-rocket'></i>
+                <h1>GALAXY<span>BATTLE</span></h1>
+            </div>
+            <div class="controls">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Theme">
+                    <i class='bx bx-moon'></i>
+                </button>
+                <button id="restart-btn" class="primary-btn">
+                    <i class='bx bx-refresh'></i> Back
+                </button>
+            </div>
+        </header>
+
+        <section class="mode-selection" id="mode-selection">
+            <h2 class="section-title">Combat Mode</h2>
+            <div class="mode-grid">
+                <button class="mode-card active" data-mode="single">
+                    <i class='bx bxs-user'></i>
+                    <span>Solo</span>
+                </button>
+                <button class="mode-card" data-mode="pvp">
+                    <i class='bx bxs-group'></i>
+                    <span>Duel</span>
+                </button>
+                <button class="mode-card" data-mode="ai">
+                    <i class='bx bxs-bot'></i>
+                    <span>vs AI</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Dynamic Game Information -->
+        <div id="turn-indicator" class="turn-indicator hidden">Player 1's Turn</div>
+
+        <section class="stats-container">
+            <!-- Single Player View -->
+            <div id="single-stats" class="stats-container">
+                <div class="stat-card">
+                    <span class="label">Time</span>
+                    <span class="value" id="timer-display">00:00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="label">Moves</span>
+                    <span class="value" id="moves-count">0</span>
+                </div>
+                <div class="stat-card" id="best-score-container">
+                    <span class="label">Best</span>
+                    <span class="value" id="best-score">--</span>
+                </div>
+            </div>
+
+            <!-- Multi-Player View -->
+            <div class="stat-card p1-stat hidden">
+                <span class="label">Player 1</span>
+                <span class="value" id="p1-score">0</span>
+            </div>
+            <div class="stat-card p2-stat hidden">
+                <span class="label" id="p2-name">Player 2</span>
+                <span class="value" id="p2-score">0</span>
+            </div>
+        </section>
+
+        <section class="game-board" id="game-board">
+            <!-- Cards will be generated by JS -->
+        </section>
+
+        <footer class="game-footer">
+            <p>&copy; 2026 Galaxy Memory Battle | Cosmic Division</p>
+        </footer>
+    </div>
+
+    <!-- Win Modal -->
+    <div class="modal-overlay" id="win-modal">
+        <div class="modal-content">
+            <div class="crown-icon">
+                <i class='bx bxs-trophy'></i>
+            </div>
+            <div class="modal-header">
+                <h2>Mission Accomplished</h2>
+                <p>Cosmic realm secured. Signal transmitted.</p>
+            </div>
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <span>Moves</span>
+                    <strong id="final-moves">0</strong>
+                </div>
+                <div class="modal-stat">
+                    <span>Time</span>
+                    <strong id="final-time">00:00</strong>
+                </div>
+                <div class="modal-stat">
+                    <span>Score</span>
+                    <strong id="final-score">0</strong>
+                </div>
+            </div>
+            <button class="action-btn" id="play-again-btn">Re-engage Fleet</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
